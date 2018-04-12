@@ -1,0 +1,39 @@
+FROM python:3.5-alpine
+
+ENV http_proxy http://one.proxy.att.com:8080
+ENV https_proxy http://one.proxy.att.com:8080
+
+ENV GROUPID=1000 \
+    USERNAME=dcae \
+    USERID=1001 \
+    USER_HOME=/home/dcae
+
+RUN apk add --no-cache \
+    autoconf \
+    gcc \
+    libc-dev \
+    linux-headers \
+    nginx \
+    && :
+
+RUN pip install --upgrade setuptools && \
+    pip install uwsgi==2.0.15
+
+RUN mkdir -p \
+    /var/log/uwsgi \
+    /run/uwsgi \
+    /srv    
+
+RUN addgroup -g ${GROUPID} -S ${USERNAME}
+
+RUN adduser -S -G ${USERNAME} -u ${USERID} -s /bin/bash -h ${USER_HOME} ${USERNAME}
+
+RUN chown ${USERNAME}:nginx /run/uwsgi
+
+RUN apk del \
+    autoconf \
+    gcc \
+    libc-dev \
+    linux-headers \
+    && :
+

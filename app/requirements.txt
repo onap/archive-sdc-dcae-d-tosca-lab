@@ -1,0 +1,11 @@
+PyYAML==3.11
+argparse==1.4.0
+dateutils==0.6.6
+python-dateutil==2.5.3
+pytz==2016.6.1
+requests==2.13.0
+six==1.10.0
+virtualenv==12.1.1
+utils
+web.py==0.40.dev0
+
