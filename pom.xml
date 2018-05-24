@@ -1,4 +1,4 @@
-<project 
+<project
   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -12,7 +12,7 @@
   <artifactId>dcae-tosca-app</artifactId>
   <packaging>pom</packaging>
   <version>1.0.0-SNAPSHOT</version>
-  <name>dcae-tosca-app</name>
+  <name>dcae-d tosca-lab</name>
 
   <properties>
         <!--nexus-->
@@ -24,6 +24,8 @@
         <docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
         <docker.latest.tag>${project.version}-latest</docker.latest.tag>
         <docker.staging.tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</docker.staging.tag>
+        <sonar.branch>${project.version}</sonar.branch>
+        <sonar.skip>true</sonar.skip>
   </properties>
 
 
@@ -156,4 +158,3 @@
       </profile>
   </profiles>
 </project>
-
