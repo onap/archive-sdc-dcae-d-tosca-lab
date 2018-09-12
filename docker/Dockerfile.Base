@@ -1,34 +1,15 @@
 FROM python:3.5-alpine
 
-ENV http_proxy http://one.proxy.att.com:8080
-ENV https_proxy http://one.proxy.att.com:8080
 
-ENV GROUPID=1000 \
-    USERNAME=dcae \
-    USERID=1001 \
-    USER_HOME=/home/dcae
-
-RUN apk add --no-cache \
+RUN apk add --update --no-cache \
     autoconf \
     gcc \
     libc-dev \
     linux-headers \
     nginx \
-    && :
-
-RUN pip install --upgrade setuptools && \
-    pip install uwsgi==2.0.15
-
-RUN mkdir -p \
-    /var/log/uwsgi \
-    /run/uwsgi \
-    /srv    
-
-RUN addgroup -g ${GROUPID} -S ${USERNAME}
-
-RUN adduser -S -G ${USERNAME} -u ${USERID} -s /bin/bash -h ${USER_HOME} ${USERNAME}
-
-RUN chown ${USERNAME}:nginx /run/uwsgi
+    curl \
+    && pip install --upgrade setuptools \
+    && pip install gunicorn
 
 RUN apk del \
     autoconf \
@@ -37,3 +18,9 @@ RUN apk del \
     linux-headers \
     && :
 
+RUN mkdir -p /run/nginx /run/gunicorn && \
+    touch /run/nginx/nginx.pid && \
+    chown -R nginx:nginx /var/log/nginx /run/nginx /run/gunicorn && \
+    chmod 0775 /var/log/nginx && \
+    chmod 0770 /var/lib/nginx/tmp /run/gunicorn && \
+    chmod 0664 /run/nginx/nginx.pid

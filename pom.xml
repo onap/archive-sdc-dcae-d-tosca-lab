@@ -2,46 +2,44 @@
   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.onap.oparent</groupId>
-    <artifactId>oparent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-  </parent>
 
-  <groupId>org.onap.dcae.dcae-tosca-app </groupId>
+  <groupId>org.onap.dcae.dcae-tosca-app</groupId>
   <artifactId>dcae-tosca-app</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.3.0-SNAPSHOT</version>
   <name>dcae-d tosca-lab</name>
 
   <properties>
-        <!--nexus-->
-        <sitePath>/content/sites/site/org/onap/dcae/${project.artifactId}/${project.version}</sitePath>
-        <!--maven-->
-        <timestamp>${maven.build.timestamp}</timestamp>
-        <maven.build.timestamp.format>yyyy.MM.dd.HH.mm</maven.build.timestamp.format>
-        <!--docker-->
-        <docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
-        <docker.latest.tag>${project.version}-latest</docker.latest.tag>
-        <docker.staging.tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</docker.staging.tag>
         <sonar.branch>${project.version}</sonar.branch>
         <sonar.skip>true</sonar.skip>
   </properties>
 
-
   <profiles>
       <profile>
           <id>docker</id>
+          <activation>
+              <activeByDefault>false</activeByDefault>
+          </activation>
+
           <properties>
-              <!-- Docker tags -->
+              <!--nexus-->
+              <sitePath>/content/sites/site/org/onap/dcae/${project.artifactId}/${project.version}</sitePath>
+              <!--maven-->
+              <timestamp>${maven.build.timestamp}</timestamp>
               <maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
+
+              <!--docker-->
+              <fabric8.version>0.23.0</fabric8.version>
+              <docker.registry>nexus3.onap.org:10001</docker.registry>
+              <docker.username>docker</docker.username>
+              <docker.password>docker</docker.password>
+              <docker.namespace>onap</docker.namespace>
               <docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
               <docker.latest.tag>${project.version}-latest</docker.latest.tag>
               <docker.staging.tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</docker.staging.tag>
           </properties>
-          <activation>
-              <activeByDefault>false</activeByDefault>
-          </activation>
+
+
           <build>
               <plugins>
                   <plugin>
@@ -95,14 +93,23 @@
                   <plugin>
                       <groupId>io.fabric8</groupId>
                       <artifactId>docker-maven-plugin</artifactId>
-                      <version>0.19.1</version>
+                      <version>${fabric8.version}</version>
                       <configuration>
                           <verbose>true</verbose>
                           <apiVersion>1.23</apiVersion>
-                          <registry>nexus3.onap.org:10003</registry>
+
+                          <registry>${docker.registry}</registry>
+                          <authConfig>
+                              <pull>
+                                <username>${docker.username}</username>
+                                <password>${docker.password}</password>
+                              </pull>
+                          </authConfig>
+
                           <images>
+
                               <image>
-                                  <name>onap/dcae-tosca-app</name>
+                                  <name>${docker.namespace}/dcae-tosca-app</name>
                                   <alias>dcae-tosca-app</alias>
                                   <build>
                                       <cleanup>true</cleanup>
@@ -116,6 +123,7 @@
                               </image>
                           </images>
                       </configuration>
+
                       <executions>
                           <execution>
                               <id>clean-images</id>
@@ -129,7 +137,7 @@
                           </execution>
                           <execution>
                               <id>generate-images</id>
-                              <phase>package</phase>
+                              <phase>install</phase>
                               <goals>
                                   <goal>build</goal>
                               </goals>
@@ -138,12 +146,8 @@
                               <id>push-images</id>
                               <phase>deploy</phase>
                               <goals>
-                                  <goal>build</goal>
-                                  <goal>push</goal>
+                                   <goal>push</goal>
                               </goals>
-                              <configuration>
-                                  <image>onap/dcae-tosca-app</image>
-                              </configuration>
                           </execution>
                       </executions>
                   </plugin>
@@ -158,3 +162,4 @@
       </profile>
   </profiles>
 </project>
+
