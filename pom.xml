@@ -1,165 +1,150 @@
-<project
-  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.onap.dcae.dcae-tosca-app</groupId>
-  <artifactId>dcae-tosca-app</artifactId>
-  <packaging>pom</packaging>
-  <version>1.3.0-SNAPSHOT</version>
-  <name>dcae-d tosca-lab</name>
+    <groupId>org.onap.dcae.dcae-tosca-app</groupId>
+    <artifactId>dcae-tosca-app</artifactId>
+    <packaging>pom</packaging>
+    <version>1.3.0-SNAPSHOT</version>
+    <name>dcae-d tosca-lab</name>
 
-  <properties>
+    <properties>
+        <!--nexus-->
+        <sitePath>/content/sites/site/org/onap/dcae/${project.artifactId}/${project.version}</sitePath>
+        <!--maven-->
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
+        <!--docker-->
+        <fabric8.version>0.23.0</fabric8.version>
+        <docker.registry>nexus3.onap.org:10001</docker.registry>
+        <docker.username>docker</docker.username>
+        <docker.password>docker</docker.password>
+        <docker.namespace>onap</docker.namespace>
+        <docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
+        <docker.latest.tag>${project.version}-latest</docker.latest.tag>
+        <docker.staging.tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</docker.staging.tag>
         <sonar.branch>${project.version}</sonar.branch>
         <sonar.skip>true</sonar.skip>
-  </properties>
+    </properties>
 
-  <profiles>
-      <profile>
-          <id>docker</id>
-          <activation>
-              <activeByDefault>false</activeByDefault>
-          </activation>
-
-          <properties>
-              <!--nexus-->
-              <sitePath>/content/sites/site/org/onap/dcae/${project.artifactId}/${project.version}</sitePath>
-              <!--maven-->
-              <timestamp>${maven.build.timestamp}</timestamp>
-              <maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
-
-              <!--docker-->
-              <fabric8.version>0.23.0</fabric8.version>
-              <docker.registry>nexus3.onap.org:10001</docker.registry>
-              <docker.username>docker</docker.username>
-              <docker.password>docker</docker.password>
-              <docker.namespace>onap</docker.namespace>
-              <docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
-              <docker.latest.tag>${project.version}-latest</docker.latest.tag>
-              <docker.staging.tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</docker.staging.tag>
-          </properties>
-
-
-          <build>
-              <plugins>
-                  <plugin>
-                      <groupId>org.codehaus.mojo</groupId>
-                      <artifactId>build-helper-maven-plugin</artifactId>
-                      <version>1.8</version>
-                      <executions>
-                          <execution>
-                              <id>parse-version</id>
-                              <goals>
-                                  <goal>parse-version</goal>
-                              </goals>
-                          </execution>
-                      </executions>
-                  </plugin>
-                  <plugin>
-                      <groupId>org.sonatype.plugins</groupId>
-                      <artifactId>nexus-staging-maven-plugin</artifactId>
-                      <version>1.6.7</version>
-                      <extensions>true</extensions>
+    <build>
+      <plugins>
+          <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>build-helper-maven-plugin</artifactId>
+              <version>1.8</version>
+              <executions>
+                  <execution>
+                      <id>parse-version</id>
+                      <goals>
+                          <goal>parse-version</goal>
+                      </goals>
+                  </execution>
+              </executions>
+          </plugin>
+          <plugin>
+              <groupId>org.sonatype.plugins</groupId>
+              <artifactId>nexus-staging-maven-plugin</artifactId>
+              <version>1.6.7</version>
+              <extensions>true</extensions>
+              <configuration>
+                  <nexusUrl>${onap.nexus.url}</nexusUrl>
+                  <stagingProfileId>176c31dfe190a</stagingProfileId>
+                  <serverId>ecomp-staging</serverId>
+              </configuration>
+          </plugin>
+          <plugin>
+              <artifactId>maven-resources-plugin</artifactId>
+              <version>3.0.2</version>
+              <executions>
+                  <execution>
+                      <id>copy-docker-file</id>
+                      <phase>validate</phase>
+                      <goals>
+                          <goal>copy-resources</goal>
+                      </goals>
                       <configuration>
-                          <nexusUrl>${onap.nexus.url}</nexusUrl>
-                          <stagingProfileId>176c31dfe190a</stagingProfileId>
-                          <serverId>ecomp-staging</serverId>
+                          <outputDirectory>${project.basedir}</outputDirectory>
+                          <resources>
+                              <resource>
+                                  <directory>${project.basedir}/docker</directory>
+                                  <includes>
+                                      <include>Dockerfile</include>
+                                  </includes>
+                              </resource>
+                          </resources>
                       </configuration>
-                  </plugin>
-                  <plugin>
-                      <artifactId>maven-resources-plugin</artifactId>
-                      <version>3.0.2</version>
-                      <executions>
-                          <execution>
-                              <id>copy-docker-file</id>
-                              <phase>validate</phase>
-                              <goals>
-                                  <goal>copy-resources</goal>
-                              </goals>
-                              <configuration>
-                                  <outputDirectory>${project.basedir}</outputDirectory>
-                                  <resources>
-                                      <resource>
-                                          <directory>${project.basedir}/docker</directory>
-                                          <includes>
-                                              <include>Dockerfile</include>
-                                          </includes>
-                                      </resource>
-                                  </resources>
-                              </configuration>
-                          </execution>
-                      </executions>
-                  </plugin>
-                  <plugin>
-                      <groupId>io.fabric8</groupId>
-                      <artifactId>docker-maven-plugin</artifactId>
-                      <version>${fabric8.version}</version>
+                  </execution>
+              </executions>
+          </plugin>
+          <plugin>
+              <groupId>io.fabric8</groupId>
+              <artifactId>docker-maven-plugin</artifactId>
+              <version>${fabric8.version}</version>
+              <configuration>
+                  <verbose>true</verbose>
+                  <apiVersion>1.23</apiVersion>
+
+                  <registry>${docker.registry}</registry>
+                  <authConfig>
+                      <pull>
+                        <username>${docker.username}</username>
+                        <password>${docker.password}</password>
+                      </pull>
+                  </authConfig>
+
+                  <images>
+
+                      <image>
+                          <name>${docker.namespace}/dcae-tosca-app</name>
+                          <alias>dcae-tosca-app</alias>
+                          <build>
+                              <cleanup>true</cleanup>
+                              <tags>
+                                  <tag>${docker.tag}</tag>
+                                  <tag>${docker.latest.tag}</tag>
+                                  <tag>${docker.staging.tag}</tag>
+                              </tags>
+                              <dockerFileDir>${project.basedir}</dockerFileDir>
+                          </build>
+                      </image>
+                  </images>
+              </configuration>
+
+              <executions>
+                  <execution>
+                      <id>clean-images</id>
+                      <phase>pre-clean</phase>
+                      <goals>
+                          <goal>remove</goal>
+                      </goals>
                       <configuration>
-                          <verbose>true</verbose>
-                          <apiVersion>1.23</apiVersion>
-
-                          <registry>${docker.registry}</registry>
-                          <authConfig>
-                              <pull>
-                                <username>${docker.username}</username>
-                                <password>${docker.password}</password>
-                              </pull>
-                          </authConfig>
-
-                          <images>
-
-                              <image>
-                                  <name>${docker.namespace}/dcae-tosca-app</name>
-                                  <alias>dcae-tosca-app</alias>
-                                  <build>
-                                      <cleanup>true</cleanup>
-                                      <tags>
-                                          <tag>${docker.tag}</tag>
-                                          <tag>${docker.latest.tag}</tag>
-                                          <tag>${docker.staging.tag}</tag>
-                                      </tags>
-                                      <dockerFileDir>${project.basedir}</dockerFileDir>
-                                  </build>
-                              </image>
-                          </images>
+                          <removeAll>true</removeAll>
                       </configuration>
-
-                      <executions>
-                          <execution>
-                              <id>clean-images</id>
-                              <phase>pre-clean</phase>
-                              <goals>
-                                  <goal>remove</goal>
-                              </goals>
-                              <configuration>
-                                  <removeAll>true</removeAll>
-                              </configuration>
-                          </execution>
-                          <execution>
-                              <id>generate-images</id>
-                              <phase>install</phase>
-                              <goals>
-                                  <goal>build</goal>
-                              </goals>
-                          </execution>
-                          <execution>
-                              <id>push-images</id>
-                              <phase>deploy</phase>
-                              <goals>
-                                   <goal>push</goal>
-                              </goals>
-                          </execution>
-                      </executions>
-                  </plugin>
-              </plugins>
-          </build>
-          <distributionManagement>
-              <site>
-                  <id>nexus</id>
-                  <url>dav:${nexus.url}${sitePath}</url>
-              </site>
-          </distributionManagement>
-      </profile>
-  </profiles>
+                  </execution>
+                  <execution>
+                      <id>generate-images</id>
+                      <phase>install</phase>
+                      <goals>
+                          <goal>build</goal>
+                      </goals>
+                  </execution>
+                  <execution>
+                      <id>push-images</id>
+                      <phase>deploy</phase>
+                      <goals>
+                           <goal>push</goal>
+                      </goals>
+                  </execution>
+              </executions>
+          </plugin>
+      </plugins>
+    </build>
+    <distributionManagement>
+      <site>
+          <id>nexus</id>
+          <url>dav:${nexus.url}${sitePath}</url>
+      </site>
+    </distributionManagement>
 </project>
 
