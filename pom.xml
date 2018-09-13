@@ -12,6 +12,7 @@
         <!--nexus-->
         <nexus.proxy>https://nexus.onap.org</nexus.proxy>
         <sitePath>/content/sites/site/org/onap/dcae/${project.artifactId}/${project.version}</sitePath>
+        <staging.profile.id>176c31dfe190a</staging.profile.id>
         <!--maven-->
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
@@ -42,6 +43,17 @@
                       </goals>
                   </execution>
               </executions>
+          </plugin>
+          <plugin>
+              <groupId>org.sonatype.plugins</groupId>
+              <artifactId>nexus-staging-maven-plugin</artifactId>
+              <version>1.6.7</version>
+              <extensions>true</extensions>
+              <configuration>
+                  <nexusUrl>${nexus.proxy}</nexusUrl>
+                  <stagingProfileId>${staging.profile.id}</stagingProfileId>
+                  <serverId>ecomp-staging</serverId>
+              </configuration>
           </plugin>
           <plugin>
               <artifactId>maven-resources-plugin</artifactId>
