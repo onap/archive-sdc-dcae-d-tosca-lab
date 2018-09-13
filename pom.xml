@@ -10,6 +10,7 @@
 
     <properties>
         <!--nexus-->
+        <nexus.proxy>https://nexus.onap.org</nexus.proxy>
         <sitePath>/content/sites/site/org/onap/dcae/${project.artifactId}/${project.version}</sitePath>
         <!--maven-->
         <timestamp>${maven.build.timestamp}</timestamp>
@@ -129,21 +130,21 @@
           </plugin>
       </plugins>
     </build>
-     <distributionManagement>
-         <repository>
-             <id>ecomp-releases</id>
-             <name>Release Repository</name>
-             <url>${nexus.proxy}/content/repositories/releases/</url>
-         </repository>
-         <snapshotRepository>
-             <id>ecomp-snapshots</id>
-             <name>Snapshot Repository</name>
-             <url>${nexus.proxy}/content/repositories/snapshots/</url>
-         </snapshotRepository>
-         <site>
-             <id>ecomp-site</id>
-             <url>dav:${nexus.proxy}${sitePath}</url>
-         </site>
-     </distributionManagement>
+    <distributionManagement>
+     <repository>
+         <id>ecomp-releases</id>
+         <name>Release Repository</name>
+         <url>${nexus.proxy}/content/repositories/releases/</url>
+     </repository>
+     <snapshotRepository>
+         <id>ecomp-snapshots</id>
+         <name>Snapshot Repository</name>
+         <url>${nexus.proxy}/content/repositories/snapshots/</url>
+     </snapshotRepository>
+     <site>
+         <id>ecomp-site</id>
+         <url>dav:${nexus.proxy}${sitePath}</url>
+     </site>
+    </distributionManagement>
 </project>
 
