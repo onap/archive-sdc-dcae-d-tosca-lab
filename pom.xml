@@ -2,11 +2,11 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.onap.sdc.dcae-d.tosca-app</groupId>
-    <artifactId>dcae-tosca-app</artifactId>
+    <groupId>org.onap.sdc.dcae-d.tosca-lab</groupId>
+    <artifactId>dcae-tosca-lab</artifactId>
     <packaging>pom</packaging>
     <version>1.3.0-SNAPSHOT</version>
-    <name>dcae-tosca-app</name>
+    <name>dcae-tosca-lab</name>
 
     <properties>
         <!--nexus-->
