@@ -1,0 +1,50 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:  
+       
+  tosca.dcae.nodes.Root:
+    derived_from: tosca.nodes.Root
+
+  cloudify.dcae.nodes.Root:
+    derived_from: tosca.nodes.Root
+    
+  tosca.dcae.nodes.dockerHost:
+    derived_from: tosca.dcae.nodes.Root
+    properties: 
+      location_id: 
+        type: string
+        required: true
+      docker_host_override:
+        type: string
+        
+    capabilities:
+      host: 
+        type: dcae.capabilities.dockerHost
+
+    requirements: 
+    - composition:
+        capability: dcae.capabilities.composition.host
+
+  dcae.nodes.SelectedDockerHost:
+    derived_from: cloudify.dcae.nodes.Root
+    properties: 
+      location_id: 
+        type: string
+        required: true
+      docker_host_override:
+        type: string
+    capabilities:
+      host:
+        type: dcae.capabilities.dockerHost
+
+        
+capability_types:
+  dcae.capabilities.dockerHost: 
+    derived_from: tosca.capabilities.Root
+
+  dcae.capabilities.composition.host:
+    derived_from: tosca.capabilities.Root
+    properties:
+      service_id:
+        type: string
+      location_id:
+        type: string

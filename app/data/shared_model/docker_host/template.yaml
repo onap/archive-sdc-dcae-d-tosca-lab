@@ -1,0 +1,25 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+
+metadata:
+  template_name: docker_host
+
+  
+imports:
+  - schema: schema.yaml
+  
+topology_template:
+  inputs:
+    docker_host_override:
+      type: string
+      default: ""
+    
+  node_templates:             
+    docker_host:
+      type: tosca.dcae.nodes.dockerHost
+      properties: 
+        location_id: {get_property: [SELF, composition, location_id]}
+        docker_host_override: {get_input: docker_host_override}  
+
+
+    
+

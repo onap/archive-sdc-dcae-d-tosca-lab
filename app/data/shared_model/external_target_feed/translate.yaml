@@ -1,0 +1,33 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: external_target_feed_translate
+imports:
+- schema: schema.yaml
+
+topology_template:
+  inputs:
+    location:
+      type: string
+    node_name:
+      type: string
+    url:
+      type: string
+    username:
+      type: string
+    userpw:
+      type: string
+    
+      
+  substitution_mappings:
+    node_type: tosca.dcae.nodes.dmaap.externalTargetFeed
+    capabilities:
+      feed:
+      - NO_PREFIX
+      - feed
+  node_templates:
+    NO_PREFIX:
+      type: dcae.nodes.ExternalTargetFeed
+      properties: 
+        url: {get_input: url}
+        username: {get_input: username}
+        userpw: {get_input: userpw}

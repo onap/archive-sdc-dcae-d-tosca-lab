@@ -1,0 +1,57 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+   
+node_types:  
+       
+  tosca.dcae.nodes.Root:
+    derived_from: tosca.nodes.Root
+
+  cloudify.dcae.nodes.Root:
+    derived_from: tosca.nodes.Root
+    
+  tosca.dcae.nodes.dmaap.existingFeed:
+    derived_from: tosca.dcae.nodes.Root
+    properties:
+      location:
+        type: string
+      node_name:
+        type: string
+      feed_id:
+        type: string
+    capabilities:
+      feed:
+        type: dcae.capabilities.dmmap.feed
+    requirements: 
+    - composition:
+        capability: dcae.capabilities.composition.host
+
+  dcae.nodes.ExistingFeed:
+    derived_from: cloudify.dcae.nodes.Root
+    capabilities:
+      feed:
+        type: dcae.capabilities.dmmap.feed
+    properties:
+      feed_id:
+        type: string
+
+
+capability_types:
+        
+  dcae.capabilities.dmmap.feed:
+    derived_from: tosca.capabilities.Root
+    properties:
+      location:
+        type: string
+      node_name:
+        type: string
+      feed_name:
+        type: string
+        
+      
+  dcae.capabilities.composition.host:
+    derived_from: tosca.capabilities.Root
+    properties:
+      service_id:
+        type: string
+      location_id:
+        type: string
+ 

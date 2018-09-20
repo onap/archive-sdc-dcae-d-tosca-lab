@@ -1,0 +1,34 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: existing_feed
+imports:
+- schema: schema.yaml
+topology_template:
+  inputs:
+    feed_id:
+      type: string
+
+  node_templates:
+    feed:
+      type: tosca.dcae.nodes.dmaap.existingFeed
+      properties:
+        feed_id: 
+          get_input: feed_id
+        location:
+          get_property:
+          - SELF
+          - composition
+          - location_id
+        node_name: __GET_NODE_NAME__
+      capabilities:
+        feed:
+          properties:
+            feed_name: ""
+            location:
+              get_property:
+              - SELF
+              - location
+            node_name:
+              get_property:
+              - SELF
+              - node_name

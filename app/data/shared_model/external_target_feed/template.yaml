@@ -1,0 +1,42 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: external_target_feed
+imports:
+- schema: schema.yaml
+topology_template:
+  inputs:
+    url:
+      type: string
+    username:
+      type: string
+    userpw:
+      type: string
+
+  node_templates:
+    feed:
+      type: tosca.dcae.nodes.dmaap.externalTargetFeed
+      properties:
+        url: 
+          get_input: url
+        username: 
+          get_input: username
+        userpw: 
+          get_input: userpw
+        location:
+          get_property:
+          - SELF
+          - composition
+          - location_id
+        node_name: __GET_NODE_NAME__
+      capabilities:
+        feed:
+          properties:
+            feed_name: ""
+            location:
+              get_property:
+              - SELF
+              - location
+            node_name:
+              get_property:
+              - SELF
+              - node_name

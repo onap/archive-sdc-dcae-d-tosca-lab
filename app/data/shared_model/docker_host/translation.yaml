@@ -1,0 +1,27 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: docker_host_translate
+
+imports:
+  - schema: schema.yaml
+       
+topology_template:
+
+  inputs: #for substitution mapping definition, these inputs are exactly the properties of dcae.nodes.dockerApp.asimovCollector
+    location_id: 
+      type: string
+    docker_host_override:
+      type: string
+
+      
+  substitution_mappings: 
+    node_type: tosca.dcae.nodes.dockerHost
+    capabilities: 
+      host: [host, host]
+      
+  node_templates:              
+    host:
+      type: dcae.nodes.SelectedDockerHost
+      properties:
+        location_id: {get_input: location_id}
+        docker_host_override: {get_input: docker_host_override}

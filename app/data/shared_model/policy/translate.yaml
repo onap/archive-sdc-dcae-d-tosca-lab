@@ -1,0 +1,23 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: policy_translate
+imports:
+- schema: schema.yaml
+topology_template:
+  inputs: 
+    policy_name: 
+      type: string
+    policy_id:
+      type: string
+   
+  substitution_mappings:
+    node_type: tosca.dcae.nodes.policy
+    capabilities:
+      policy:
+      - NO_PREFIX
+      - policy
+  node_templates:
+    NO_PREFIX:
+      type: dcae.nodes.policy
+      properties:
+        policy_id: {get_input: policy_id}

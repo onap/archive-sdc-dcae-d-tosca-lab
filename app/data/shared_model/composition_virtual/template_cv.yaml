@@ -1,0 +1,39 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+
+#metadata section: used for catalog tagging
+metadata:
+  template_name: composition_virtual
+  template_description: virtual node to include common info for all nodes in the composition
+  template_version: 1.0.0
+#  template_author: Shu Shi
+  
+#  asc_catalog: "{name:\"Utils\"}"
+       
+imports:
+  - schema: schema.yaml
+  
+topology_template:
+
+  inputs: 
+#    service_id:
+#      type: string
+    dcae_service_location:
+      type: string
+ 
+  node_templates:             
+    composition_virtual:
+      type: dcae.nodes.composition.virtual
+      properties: 
+#        service_id: {get_input: service_id}
+        location_id: {get_input: dcae_service_location}
+        
+      capabilities: 
+        host: 
+          properties: 
+            service_id: {get_property: [SELF, service_id]}
+            location_id: {get_property: [SELF, location_id]}
+          
+
+
+    
+

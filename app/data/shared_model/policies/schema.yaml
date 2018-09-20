@@ -1,0 +1,38 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+
+node_types:  
+
+  tosca.dcae.nodes.Root:
+    derived_from: tosca.nodes.Root
+  cloudify.dcae.nodes.Root:
+    derived_from: tosca.nodes.Root
+
+  tosca.dcae.nodes.policies:
+    derived_from: tosca.dcae.nodes.Root
+    properties:
+      policyName: 
+        type: string
+      configName:
+        type: string
+      onapName:
+        type: string
+      configAttributes:
+        type: string
+      unique:
+        type: boolean
+    capabilities:
+      policy: 
+        type: dcae.capabilities.policy
+        
+  dcae.nodes.policies:
+    derived_from: cloudify.dcae.nodes.Root
+    properties:
+      policy_filter:
+        type: map
+    capabilities:
+      policy: 
+        type: dcae.capabilities.policy
+        
+capability_types:
+  dcae.capabilities.policy:
+    derived_from: tosca.capabilities.Root

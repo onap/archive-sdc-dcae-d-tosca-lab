@@ -1,0 +1,66 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+   
+node_types:  
+  tosca.dcae.nodes.Root:
+    derived_from: tosca.nodes.Root
+  cloudify.dcae.nodes.Root:
+    derived_from: tosca.nodes.Root
+ 
+  tosca.dcae.nodes.dmaap.existingTopic:
+    derived_from: tosca.dcae.nodes.Root
+    properties:
+      aaf_username:
+        type: string
+      aaf_password:
+        type: string
+      location:
+        type: string
+      client_role:
+        type: string 
+      node_name:
+        type: string
+      fqtn:
+        type: string
+    capabilities:
+      topic:
+        type: dcae.capabilities.dmmap.topic
+    requirements: 
+    - composition:
+        capability: dcae.capabilities.composition.host
+        
+  dcae.nodes.ExistingTopic:
+    derived_from: cloudify.dcae.nodes.Root
+    properties:
+      fqtn:
+        type: string
+    capabilities:
+      topic:
+        type: dcae.capabilities.dmmap.topic
+ 
+capability_types:
+        
+  dcae.capabilities.dmmap.topic:
+    derived_from: tosca.capabilities.Root
+    properties:
+      aaf_username:
+        type: string
+      aaf_password:
+        type: string
+      location:
+        type: string
+      client_role:
+        type: string 
+      node_name:
+        type: string
+      topic_name:
+        type: string
+        
+      
+  dcae.capabilities.composition.host:
+    derived_from: tosca.capabilities.Root
+    properties:
+      service_id:
+        type: string
+      location_id:
+        type: string
+ 

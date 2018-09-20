@@ -1,0 +1,34 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: policies_translate
+imports:
+- schema: schema.yaml
+topology_template:
+  inputs: 
+    policyName: 
+      type: string
+    configName:
+      type: string
+    onapName:
+      type: string
+    configAttributes:
+      type: string
+    unique:
+      type: boolean
+   
+  substitution_mappings:
+    node_type: tosca.dcae.nodes.policies
+    capabilities:
+      policy:
+      - NO_PREFIX
+      - policy
+  node_templates:
+    NO_PREFIX:
+      type: dcae.nodes.policies
+      properties:
+        policy_filter: 
+          policyName: {get_input: policyName}
+          configName: {get_input: configName}
+          onapName:   {get_input: onapName}
+          configAttributes: {get_input: configAttributes}
+          unique:     {get_input: unique}

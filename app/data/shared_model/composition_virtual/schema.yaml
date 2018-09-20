@@ -1,0 +1,27 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:  
+       
+  tosca.dcae.nodes.Root:
+    derived_from: tosca.nodes.Root
+
+  dcae.nodes.composition.virtual:
+    derived_from: tosca.nodes.Root
+    properties: 
+      service_id:
+        type: string
+        required: true
+      location_id: 
+        type: string
+        required: true
+    capabilities:
+      host: 
+        type: dcae.capabilities.composition.host
+
+capability_types:
+  dcae.capabilities.composition.host:
+    derived_from: tosca.capabilities.Root
+    properties:
+      service_id:
+        type: string
+      location_id:
+        type: string
