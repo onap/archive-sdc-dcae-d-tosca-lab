@@ -25,11 +25,30 @@
         <docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
         <docker.latest.tag>${project.version}-latest</docker.latest.tag>
         <docker.staging.tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest</docker.staging.tag>
+         <!--sonar-->
+        <sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
+        <sonar.sources>.</sonar.sources>
+        <sonar.python.coverage.reportPath>app/coverage.xml</sonar.python.coverage.reportPath>
+        <sonar.language>py</sonar.language>
+        <sonar.pluginName>python</sonar.pluginName>
+        <sonar.exclusions>app/tests/*.py</sonar.exclusions>
         <sonar.branch>${project.version}</sonar.branch>
         <sonar.skip>true</sonar.skip>
     </properties>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>1.2.1</version>
+                    <configuration>
+                       <executable>${session.executionRootDirectory}/mvn-phase-script.sh</executable>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
       <plugins>
           <plugin>
               <groupId>org.codehaus.mojo</groupId>
@@ -140,6 +159,26 @@
                   </execution>
               </executions>
           </plugin>
+          <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>1.2.1</version>
+          <executions>
+            <execution>
+              <id>test script</id>
+              <phase>test</phase>
+              <goals>
+                <goal>exec</goal>
+              </goals>
+              <configuration>
+                <arguments>
+                  <argument>__</argument>
+                  <argument>test</argument>
+                </arguments>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
     </build>
     <distributionManagement>

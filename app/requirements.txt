@@ -1,4 +1,4 @@
-PyYAML==3.11
+PyYAML
 argparse==1.4.0
 dateutils==0.6.6
 python-dateutil==2.5.3
@@ -8,4 +8,5 @@ six==1.10.0
 virtualenv==12.1.1
 utils
 web.py==0.40.dev0
+
 
