@@ -33,7 +33,7 @@
         <sonar.pluginName>python</sonar.pluginName>
         <sonar.exclusions>app/tests/*.py</sonar.exclusions>
         <sonar.branch>${project.version}</sonar.branch>
-        <sonar.skip>true</sonar.skip>
+        <!--sonar.skip>true</sonar.skip-->
     </properties>
 
     <build>
