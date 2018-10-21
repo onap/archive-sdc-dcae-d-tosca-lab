@@ -7,8 +7,7 @@ from toscalib.utils import tosca_import, tosca_heat
 
 import copy, re, logging
 from toscalib.templates.interface_item import InterfaceItem
-#Author: Shu Shi
-#emaiL: shushi@research.att.com
+
 
 
 
@@ -61,13 +60,13 @@ class Node(object):
         for intf in node_type.interfaces.keys():
             self.interfaces[intf] = InterfaceItem(node_type.interfaces[intf])
 
-        if node_type.mapping_template is not None:
-            from toscalib.templates.topology import  ToscaTopology
-            self.mapping_template = copy.deepcopy(node_type.mapping_template)
-            self.mapping_template._update_prefix(self.name + '_')
-            self.mapping_template._verify_substitution(self)
-#             for sub_rule in node_type.mapping_template.sub_rules:
-#                 sub_rule._update_pointer(self, self.mapping_template)
+#         if node_type.mapping_template is not None:
+#             from toscalib.templates.topology import  ToscaTopology
+#             self.mapping_template = copy.deepcopy(node_type.mapping_template)
+#             self.mapping_template._update_prefix(self.name + '_')
+#             self.mapping_template._verify_substitution(self)
+# #             for sub_rule in node_type.mapping_template.sub_rules:
+# #                 sub_rule._update_pointer(self, self.mapping_template)
 
         self._update_parent_node()
         
@@ -83,8 +82,8 @@ class Node(object):
                     prop_item = self._get_property_item(prop_name)
                     if prop_item is not None:
                         prop_item._assign(prop_sec[prop_name])
-                        if prop_sec[prop_name] == '__GET_NODE_NAME__':
-                            prop_item._assign(self.name)
+#                         if prop_sec[prop_name] == '__GET_NODE_NAME__':
+#                             prop_item._assign(self.name)
                         
 #        if content.has_key(NOD_REQUIREMENTS):
         if NOD_REQUIREMENTS in content:
@@ -172,24 +171,28 @@ class Node(object):
         for req in self.requirements:
             req._verify_requirement(node_dict)
      
-    def _verify_functions(self):
+    def _verify_functions(self, parent_temp = None):
+        if parent_temp is not None:
+            temp = parent_temp
+        else:
+            temp = self.template
         if self.id.value is not None:
-            self.id.value._update_function_reference(self.template, self, self.id)
+            self.id.value._update_function_reference(temp, self, self.id)
         for prop_item in iter(self.properties.values()):
             if prop_item.value is not None:
-                prop_item.value._update_function_reference(self.template, self, prop_item)     
+                prop_item.value._update_function_reference(temp, self, prop_item)     
         for cap_item in iter(self.capabilities.values()):
             for cap_item_prop in iter(cap_item.properties.values()):
                 if cap_item_prop.value is not None:
-                    cap_item_prop.value._update_function_reference(self.template, self, cap_item_prop)  
+                    cap_item_prop.value._update_function_reference(temp, self, cap_item_prop)  
         for interface_item in iter(self.interfaces.values()):
             for interface_item_input in iter(interface_item.inputs.values()):
                 if interface_item_input.value is not None: 
-                    interface_item_input.value._update_function_reference(self.template, self, interface_item_input)
+                    interface_item_input.value._update_function_reference(temp, self, interface_item_input)
             for operation_item in iter(interface_item.operations.values()):
                 for input_item in iter(operation_item.inputs.values()):
                     if input_item.value is not None:
-                        input_item.value._update_function_reference(self.template, self, input_item)
+                        input_item.value._update_function_reference(temp, self, input_item)
     
     def _update_parent_node(self):
         for prop in iter(self.properties.values()):
@@ -200,7 +203,21 @@ class Node(object):
             req._update_parent_node(self)
         for interface in iter(self.interfaces.values()):
             interface._update_parent_node(self)
-        
+    
+    def _update_get_node_name(self):
+        for prop_item in iter(self.properties.values()):
+            if prop_item.value is not None:
+                if prop_item.value.value == '__GET_NODE_NAME__':
+                    prop_item._assign(self.name)
+                    
+        for cap_item in iter(self.capabilities.values()):
+            for cap_item_prop in iter(cap_item.properties.values()):
+                if cap_item_prop.value is not None:
+                    if cap_item_prop.value.value == '__GET_NODE_NAME__':
+                        cap_item_prop._assign(self.name)    
+    
+    def _update_template(self, template):
+        self.template = template
                 
     def  _update_prefix(self, prefix):
         if self.name == 'NO_PREFIX':

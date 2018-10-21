@@ -20,25 +20,23 @@ class TestNodeTemplateMethods(unittest.TestCase):
         node._parse_pre_defined_content(prop_sec)
         self.assertEqual('template_value', node.properties.get('propertyName').value.value)
 
-    # TODO uncomment after merging ecomp latest code
-    # def test_update_get_node_name_property_value(self):
-    #     template = init_template()
-    #     node = Node(template, 'myNode', template.db.NODE_TYPES.get('nodeTypeName'))
-    #     prop_sec = {'properties': {'propertyName': '__GET_NODE_NAME__'}}
-    #     node._parse_pre_defined_content(prop_sec)
-    #     self.assertEqual('__GET_NODE_NAME__', node.properties.get('propertyName').value.value)
-    #     node._update_get_node_name()
-    #     self.assertEqual('myNode', node.properties.get('propertyName').value.value)
+    def test_update_get_node_name_property_value(self):
+        template = init_template()
+        node = Node(template, 'myNode', template.db.NODE_TYPES.get('nodeTypeName'))
+        prop_sec = {'properties': {'propertyName': '__GET_NODE_NAME__'}}
+        node._parse_pre_defined_content(prop_sec)
+        self.assertEqual('__GET_NODE_NAME__', node.properties.get('propertyName').value.value)
+        node._update_get_node_name()
+        self.assertEqual('myNode', node.properties.get('propertyName').value.value)
 
-    # TODO uncomment after merging ecomp latest code
-    # def test_update_get_node_name_capability_property_value(self):
-    #     template = init_template()
-    #     node = Node(template, 'myNode', template.db.NODE_TYPES.get('nodeTypeName'))
-    #     prop_sec = {'capabilities': {'capabilityName': {'properties': {'capabilityProperty': '__GET_NODE_NAME__'}}}}
-    #     node._parse_pre_defined_content(prop_sec)
-    #     self.assertEqual('__GET_NODE_NAME__', node._get_capability_property('capabilityName', 'capabilityProperty').value.value)
-    #     node._update_get_node_name()
-    #     self.assertEqual('myNode', node._get_capability_property('capabilityName', 'capabilityProperty').value.value)
+    def test_update_get_node_name_capability_property_value(self):
+        template = init_template()
+        node = Node(template, 'myNode', template.db.NODE_TYPES.get('nodeTypeName'))
+        prop_sec = {'capabilities': {'capabilityName': {'properties': {'capabilityProperty': '__GET_NODE_NAME__'}}}}
+        node._parse_pre_defined_content(prop_sec)
+        self.assertEqual('__GET_NODE_NAME__', node._get_capability_property('capabilityName', 'capabilityProperty').value.value)
+        node._update_get_node_name()
+        self.assertEqual('myNode', node._get_capability_property('capabilityName', 'capabilityProperty').value.value)
 
     def test_update_prefix(self):
         template = init_template()

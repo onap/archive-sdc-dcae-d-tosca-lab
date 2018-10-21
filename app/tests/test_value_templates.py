@@ -79,18 +79,17 @@ class TestValueMethods(unittest.TestCase):
         res._update_function_reference(template)
         self.assertEqual(res.value_from_item, template.inputs.get('inputName'))
 
-    # TODO uncomment after merging latest ecomp code
-    # def test_update_get_input_function_reference_auto_generate_input(self):
-    #     template = init_template()
-    #     node = template.node_dict.get('nodeName')
-    #     value = {'get_input': 'propertyName'}
-    #     res = _is_function(value)
-    #     self.assertIsNone(res.value_from_item)
-    #     self.assertIsNone(template.inputs.get('nodeName_propertyName'))
-    #     self.assertEqual(res.target_property, 'propertyName')
-    #     res._update_function_reference(template, node, node.properties.get('propertyName'))
-    #     self.assertIsNotNone(res.value_from_item)
-    #     self.assertEqual(res.value_from_item, template.inputs.get('nodeName_propertyName'))
+    def test_update_get_input_function_reference_auto_generate_input(self):
+        template = init_template()
+        node = template.node_dict.get('nodeName')
+        value = {'get_input': 'propertyName'}
+        res = _is_function(value)
+        self.assertIsNone(res.value_from_item)
+        self.assertIsNone(template.inputs.get('nodeName_propertyName'))
+        self.assertEqual(res.target_property, 'propertyName')
+        res._update_function_reference(template, node, node.properties.get('propertyName'))
+        self.assertIsNotNone(res.value_from_item)
+        self.assertEqual(res.value_from_item, template.inputs.get('nodeName_propertyName'))
 
     def test_update_get_property_function_reference_node_not_found(self):
         value = {'get_property': ['node_name', 'property_name']}

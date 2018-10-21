@@ -42,6 +42,8 @@ def _create_new_template(template, type_name, prefix_name = None):
     
     new_temp = copy.deepcopy(db.TEMPLATES[type_name])
     new_temp._update_prefix(prefix)
+    new_temp._update_get_node_name()
+    new_temp._update_template(template)
     template.inputs.update(new_temp.inputs)
     template.outputs.update(new_temp.outputs)
     template.node_dict.update(new_temp.node_dict)

@@ -73,12 +73,18 @@ class FunctionValue(object):
             elif self.target_property in temp.aux_inputs:
                 self.value_from_item = temp.aux_inputs[self.target_property]
                 return
-            else: 
-                logging.debug( 'get_input function points to a non-existent input, autofill'+ self.target_property)
+            elif self.value_from_item is None:  #This might not be the best solution, needs to pay attention to
+#                 logging.debug( 'get_input function points to a non-existent input, set it to NONE')
+#                 self_item.value = None
+                #this code is causing problems when properties in different nodes are calling the same get_input but actually mean different input values
+                
+                logging.warning( 'get_input function points to a non-existent input, autofill '+ self.target_property)
                 def_item = copy.deepcopy(self_item.definition)
-                def_item.name = self.target_property
+                def_item.name = self_node.name + '_' + self.target_property
+                self.target_property = self_node.name + '_' + self.target_property
                 temp.inputs[self.target_property] = PropertyItem(def_item)
                 self.value_from_item = temp.inputs[self.target_property]
+                
                 return 
         elif self.type == GET_PROPERTY:
             if self.extra_data is None or len(self.extra_data) < 2:
@@ -250,7 +256,7 @@ class Value(object):
             self.type_obj._update_function_reference(temp, self.value, self_node, self_item)
         if self.function is not None:
             self.function._update_function_reference(temp, self_node, self_item)
-            
+                
     def _update_prefix(self, prefix):
         if self.value is not None:
             self.type_obj._update_prefix(prefix, self.value)

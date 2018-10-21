@@ -1,5 +1,4 @@
-#Author: Shu Shi
-#emaiL: shushi@research.att.com
+
 
 
 from toscalib.templates.constant import *
@@ -177,18 +176,30 @@ class ToscaTopology(object):
                     edges.append(new_edge)
         return edges
 
-    def _update_function_pointer(self):   
+    def _update_function_pointer(self, parent_temp=None):   
         for node in iter(self.node_dict.values()):
             #node._verify_requirements(self.node_dict)
-            node._verify_functions()
+            node._verify_functions(parent_temp)
         for output in iter(self.outputs.values()):
             if output.value is not None:
-                output.value._update_function_reference(self)
+                if parent_temp is None:
+                    output.value._update_function_reference(self)
+                else:
+                    output.value._update_function_reference(parent_temp)
+
 
     def _update_translation_function_pointer(self):
         for node in iter(self.node_dict.values()):
             if node.tran_template is not None:
-                node.tran_template._update_function_pointer()
+                node.tran_template._update_function_pointer(node.template)
+    
+    def _update_get_node_name(self):
+        for node in iter(self.node_dict.values()):
+            node._update_get_node_name()
+            
+    def _update_template(self, template):
+        for node in iter(self.node_dict.values()):
+            node._update_template(template)
     
     def _update_prefix(self, prefix):
         exist_key_list = list(self.node_dict.keys())
