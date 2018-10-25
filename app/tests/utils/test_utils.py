@@ -3,6 +3,12 @@ from toscalib.templates.database import ToscaDB
 from toscalib.types.node import NodeType
 from toscalib.types.capability import CapabilityType
 from toscalib.tosca_builder import ToscaBuilder
+import os
+
+CURR_DIR = os.path.dirname(os.path.abspath(__file__))
+meta_model = os.path.join(CURR_DIR, os.pardir, '../data/meta_model/meta_tosca_schema.yaml')
+policy_model = os.path.join(CURR_DIR, os.pardir, '../data/meta_model/meta_policy_schema.yaml')
+
 
 def init_template():
     db = ToscaDB()
@@ -75,7 +81,6 @@ def init_tosca_builder_with_schema_and_spec():
                 "timeout": "1s",
                 "endpoint": "/healthcheck"}}}
 
-    meta_model = '../data/meta_model/meta_tosca_schema.yaml'
     builder = ToscaBuilder()
     builder.import_schema(meta_model)
     builder.import_spec_str(spec)
@@ -117,7 +122,6 @@ def init_tosca_builder_with_policy_schema_and_spec():
                  }]}
             ]}
 
-    policy_model = '../data/meta_model/meta_policy_schema.yaml'
     builder = ToscaBuilder()
     builder.import_schema(policy_model)
     builder.import_spec_str(spec)
@@ -138,7 +142,6 @@ def init_tosca_builder_with_hello_world_spec_k8():
             {"container": {"bind": "/opt/app/vcc/archive/data"}, "host": {"path": "/opt/data/DCAE/helloworldpm/vcc-archive"}}]},
             "artifacts": [{"type": "docker image", "uri": "dockercentral.it.att.com:5100/com.att.dcae.controller/dcae-controller-vcc-helloworld-pm:18.02-001"}]}
 
-    meta_model = '../data/meta_model/meta_tosca_schema.yaml'
     builder = ToscaBuilder()
     builder.import_schema(meta_model)
     builder.import_spec_str(spec)
