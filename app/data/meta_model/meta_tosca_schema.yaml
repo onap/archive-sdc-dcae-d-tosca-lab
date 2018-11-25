@@ -1,66 +1,91 @@
 tosca_definitions_version: tosca_simple_yaml_1_0_0
 imports:
 - policy: meta_policy_schema.yaml
-   
-node_types:  
-       
+
+node_types:
+
   tosca.dcae.nodes.Root:
     derived_from: tosca.nodes.Root
-    
+
   tosca.dcae.nodes.dockerApp:
     derived_from: tosca.dcae.nodes.Root
-    properties: 
-      service_component_type: 
+    properties:
+      cpu_period:
+        type: integer
+        required: true
+        default: 10000
+      cpu_quota:
+        type: integer
+        required: true
+        default: 30000
+      cpu_shares:
+        type: integer
+        required: true
+        default: 256
+      mem_limit:
         type: string
         required: true
-#      service_id: 
+        default: 500m
+      restart_policy.max_retry_counts:
+        type: integer
+        required: true
+        default: 3
+      restart_policy.Name:
+        type: string
+        required: true
+        default: on-failure
+      service_component_type:
+        type: string
+        required: true
+#      service_id:
 #        type: string
 #        required: true
-      location_id: 
+      location_id:
         type: string
         required: true
-      image: 
+      image:
         type: string
         required: true
-    attributes: 
+    attributes:
       service_component_name:
         type: string
-    requirements: 
-    - host: 
+    requirements:
+    - host:
         capability: dcae.capabilities.dockerHost
         relationship: dcae.relationships.component_contained_in
     - composition:
         capability: dcae.capabilities.composition.host
-        
+
+
   tosca.dcae.nodes.cdapApp:
     derived_from: tosca.dcae.nodes.Root
-    properties: 
+    properties:
       connected_broker_dns_name:
         type: string
         required: true
         default: "cdap_broker"
-      service_component_type: 
+      service_component_type:
         type: string
         required: true
-#      service_id: 
+#      service_id:
 #        type: string
 #        required: true
-#      location_id: 
+#      location_id:
 #        type: string
 #        required: true
-      jar_url: 
+      jar_url:
         type: string
         required: true
-    attributes: 
+    attributes:
       service_component_name:
         type: string
-    requirements: 
-    - host: 
+    requirements:
+    - host:
         capability: dcae.capabilities.cdapHost
         relationship: dcae.relationships.component_contained_in
 #    - composition:
-#        capability: dcae.capabilities.composition.host   
-        
+#        capability: dcae.capabilities.composition.host
+
   tosca.dcae.nodes.dmaap.topic:
     derived_from: tosca.dcae.nodes.Root
     properties:
@@ -71,7 +96,7 @@ node_types:
       location:
         type: string
       client_role:
-        type: string 
+        type: string
       node_name:
         type: string
       topic_name:
@@ -79,7 +104,7 @@ node_types:
     capabilities:
       topic:
         type: dcae.capabilities.dmmap.topic
-    requirements: 
+    requirements:
     - composition:
         capability: dcae.capabilities.composition.host
 
@@ -93,7 +118,7 @@ node_types:
       location:
         type: string
       client_role:
-        type: string 
+        type: string
       node_name:
         type: string
       fqtn:
@@ -101,11 +126,11 @@ node_types:
     capabilities:
       topic:
         type: dcae.capabilities.dmmap.topic
-    requirements: 
+    requirements:
     - composition:
         capability: dcae.capabilities.composition.host
 
-        
+
   tosca.dcae.nodes.dmaap.feed:
     derived_from: tosca.dcae.nodes.Root
     properties:
@@ -118,10 +143,10 @@ node_types:
     capabilities:
       feed:
         type: dcae.capabilities.dmmap.feed
-    requirements: 
+    requirements:
     - composition:
         capability: dcae.capabilities.composition.host
-        
+
   cloudify.dcae.nodes.Root:
     derived_from: tosca.nodes.Root
 
@@ -137,7 +162,7 @@ node_types:
     capabilities:
       feed:
         type: dcae.capabilities.dmmap.feed
-    requirements: 
+    requirements:
     - composition:
         capability: dcae.capabilities.composition.host
 
@@ -157,14 +182,14 @@ node_types:
     capabilities:
       feed:
         type: dcae.capabilities.dmmap.feed
-    requirements: 
+    requirements:
     - composition:
         capability: dcae.capabilities.composition.host
-          
+
   cloudify.dcae.nodes.Root:
     derived_from: tosca.nodes.Root
 
-    
+
   dcae.nodes.Feed:
     derived_from: cloudify.dcae.nodes.Root
     capabilities:
@@ -196,7 +221,7 @@ node_types:
       userpw:
         type: string
 
-        
+
   dcae.nodes.Topic:
     derived_from: cloudify.dcae.nodes.Root
     properties:
@@ -205,7 +230,7 @@ node_types:
     capabilities:
       topic:
         type: dcae.capabilities.dmmap.topic
-        
+
   dcae.nodes.ExistingTopic:
     derived_from: cloudify.dcae.nodes.Root
     properties:
@@ -214,20 +239,20 @@ node_types:
     capabilities:
       topic:
         type: dcae.capabilities.dmmap.topic
-        
-  dcae.nodes.DockerContainerForComponents: 
+
+  dcae.nodes.DockerContainerForComponents:
     derived_from: cloudify.dcae.nodes.Root
-    properties: 
-      service_component_type: 
+    properties:
+      service_component_type:
         type: string
         required: true
-#      service_id: 
+#      service_id:
 #        type: string
 #        required: true
-      location_id: 
+      location_id:
         type: string
         required: true
-      image: 
+      image:
         type: string
         required: true
       application_config:
@@ -235,14 +260,25 @@ node_types:
         required: true
       docker_config:
         type: map
-    attributes: 
+    attributes:
       service_component_name:
         type: string
-    requirements: 
-    - host: 
+    requirements:
+    - host:
         capability: dcae.capabilities.dockerHost
         relationship: dcae.relationships.component_contained_in
-        
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        type: tosca.interfaces.Root
+        start:
+          inputs:
+            host_config:
+              type: map
+        stop:
+          inputs:
+            cleanup_image:
+              type: boolean
+
   dcae.nodes.DockerContainerForComponentsUsingDmaap:
     derived_from: dcae.nodes.DockerContainerForComponents
     properties:
@@ -250,6 +286,58 @@ node_types:
         type: list
       streams_subscribes:
         type: list
+
+#K8s
+  dcae.nodes.ContainerizedComponent:
+    derived_from: cloudify.dcae.nodes.Root
+    properties:
+      image:
+        type: string
+        required: true
+      application_config:
+        type: map
+        required: true
+      docker_config:
+        type: map
+#      log_info:
+#        type: dcae.types.LoggingInfo
+#        required: false
+#      tls_info:
+#        type: dcae.types.TLSInfo
+#        required: false
+#      replicas:
+#        type: integer
+#        default: 1
+#        required: false
+#      always_pull_image:
+#        type: boolean
+#        default: false
+#        required: false
+
+  dcae.nodes.ContainerizedServiceComponent:
+    derived_from: dcae.nodes.ContainerizedComponent
+    properties:
+      service_component_type:
+        type: string
+        required: true
+#      service_id:
+#        type: string
+#        required: true
+      location_id:
+        type: string
+        required: true
+    attributes:
+      service_component_name:
+        type: string
+
+  dcae.nodes.ContainerizedServiceComponentUsingDmaap:
+    derived_from: dcae.nodes.ContainerizedServiceComponent
+    properties:
+      streams_publishes:
+        type: list
+      streams_subscribes:
+        type: list
+
 
   dcae.nodes.MicroService.cdap:
     derived_from: cloudify.dcae.nodes.Root
