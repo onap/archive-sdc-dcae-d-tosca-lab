@@ -24,11 +24,13 @@ RUN mkdir -p /run/nginx /run/gunicorn && \
     chmod 0770 /var/lib/nginx/tmp /run/gunicorn && \
     chmod 0664 /run/nginx/nginx.pid
 
-COPY app /srv/
+USER nginx
 
-COPY docker/docker-entrypoint.sh /srv/
+COPY --chown=nginx:nginx app /srv/
 
-COPY nginx/nginx.conf /etc/nginx/nginx.conf
+COPY --chown=nginx:nginx docker/docker-entrypoint.sh /srv/
+
+COPY --chown=nginx:nginx nginx/nginx.conf /etc/nginx/nginx.conf
 
 RUN chmod +x /srv/tosca_server.py && \
     chmod +x /srv/docker-entrypoint.sh
